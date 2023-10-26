@@ -1,13 +1,14 @@
 // Copyright 2020 TiKV Project Authors. Licensed under Apache-2.0.
 
 use std::sync::Arc;
+use std::time::Duration;
 
 use pyo3::prelude::*;
 use pyo3::types::*;
 use pyo3::ToPyObject;
 use pyo3_asyncio::tokio::future_into_py;
 use tikv_client::TimestampExt as _;
-use tikv_client::TransactionOptions;
+use tikv_client::{Config, TransactionOptions};
 use tokio::sync::RwLock;
 
 use crate::utils::*;
@@ -24,9 +25,11 @@ impl TransactionClient {
         _cls: &PyType,
         py: Python<'p>,
         pd_endpoints: Vec<String>,
+        timeout: u64,
     ) -> PyResult<&'p PyAny> {
         future_into_py(py, async move {
-            let inner = tikv_client::TransactionClient::new(pd_endpoints)
+            let config = Config::default().with_timeout(Duration::from_secs(timeout));
+            let inner = tikv_client::TransactionClient::new_with_config(pd_endpoints, config)
                 .await
                 .map_err(to_py_execption)?;
             let client = TransactionClient {

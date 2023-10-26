@@ -9,10 +9,11 @@ class RawClient:
         raise Exception("Please use `RawClient.connect()` instead.")
 
     @classmethod
-    def connect(cls, pd_endpoints):
+    def connect(cls, pd_endpoints, timeout=60):
         event_loop = asyncio.get_event_loop()
         inner = event_loop.run_until_complete(
-            asynchronous.RawClient.connect(pd_endpoints))
+            asynchronous.RawClient.connect(pd_endpoints, timeout=timeout)
+        )
         self = cls.__new__(cls)
         self.inner = inner
         return self
@@ -25,13 +26,21 @@ class RawClient:
         event_loop = asyncio.get_event_loop()
         return event_loop.run_until_complete(self.inner.batch_get(keys, cf))
 
-    def scan(self, start, end, limit, include_start=True, include_end=False, cf="default"):
+    def scan(
+        self, start, end, limit, include_start=True, include_end=False, cf="default"
+    ):
         event_loop = asyncio.get_event_loop()
-        return event_loop.run_until_complete(self.inner.scan(start, end, limit, include_start, include_end, cf))
+        return event_loop.run_until_complete(
+            self.inner.scan(start, end, limit, include_start, include_end, cf)
+        )
 
-    def scan_keys(self, start, end, limit, include_start=True, include_end=False, cf="default"):
+    def scan_keys(
+        self, start, end, limit, include_start=True, include_end=False, cf="default"
+    ):
         event_loop = asyncio.get_event_loop()
-        return event_loop.run_until_complete(self.inner.scan_keys(start, end, limit, include_start, include_end, cf))
+        return event_loop.run_until_complete(
+            self.inner.scan_keys(start, end, limit, include_start, include_end, cf)
+        )
 
     def put(self, key, value, cf="default"):
         event_loop = asyncio.get_event_loop()
@@ -49,9 +58,13 @@ class RawClient:
         event_loop = asyncio.get_event_loop()
         return event_loop.run_until_complete(self.inner.batch_delete(keys, cf))
 
-    def delete_range(self, start, end=None, include_start=True, include_end=False, cf="default"):
+    def delete_range(
+        self, start, end=None, include_start=True, include_end=False, cf="default"
+    ):
         event_loop = asyncio.get_event_loop()
-        return event_loop.run_until_complete(self.inner.delete_range(start, end, include_start, include_end, cf))
+        return event_loop.run_until_complete(
+            self.inner.delete_range(start, end, include_start, include_end, cf)
+        )
 
 
 class TransactionClient:
@@ -59,24 +72,23 @@ class TransactionClient:
         raise Exception("Please use `TransactionClient.connect()` instead.")
 
     @classmethod
-    def connect(cls, pd_endpoints):
+    def connect(cls, pd_endpoints, timeout=60):
         event_loop = asyncio.get_event_loop()
         inner = event_loop.run_until_complete(
-            asynchronous.TransactionClient.connect(pd_endpoints))
+            asynchronous.TransactionClient.connect(pd_endpoints, timeout)
+        )
         self = cls.__new__(cls)
         self.inner = inner
         return self
 
     def begin(self, pessimistic=False):
         event_loop = asyncio.get_event_loop()
-        transaction = event_loop.run_until_complete(
-            self.inner.begin(pessimistic))
+        transaction = event_loop.run_until_complete(self.inner.begin(pessimistic))
         return Transaction(transaction)
 
     def current_timestamp(self):
         event_loop = asyncio.get_event_loop()
-        return event_loop.run_until_complete(
-            self.inner.current_timestamp())
+        return event_loop.run_until_complete(self.inner.current_timestamp())
 
     def snapshot(self, timestamp, pessimistic):
         snapshot = self.inner.snapshot(timestamp, pessimistic)
@@ -101,11 +113,15 @@ class Snapshot:
 
     def scan(self, start, end, limit, include_start=True, include_end=False):
         event_loop = asyncio.get_event_loop()
-        return event_loop.run_until_complete(self.inner.scan(start, end, limit, include_start, include_end))
+        return event_loop.run_until_complete(
+            self.inner.scan(start, end, limit, include_start, include_end)
+        )
 
     def scan_keys(self, start, end, limit, include_start=True, include_end=False):
         event_loop = asyncio.get_event_loop()
-        return event_loop.run_until_complete(self.inner.scan_keys(start, end, limit, include_start, include_end))
+        return event_loop.run_until_complete(
+            self.inner.scan_keys(start, end, limit, include_start, include_end)
+        )
 
 
 class Transaction:
@@ -134,11 +150,15 @@ class Transaction:
 
     def scan(self, start, end, limit, include_start=True, include_end=False):
         event_loop = asyncio.get_event_loop()
-        return event_loop.run_until_complete(self.inner.scan(start, end, limit, include_start, include_end))
+        return event_loop.run_until_complete(
+            self.inner.scan(start, end, limit, include_start, include_end)
+        )
 
     def scan_keys(self, start, end, limit, include_start=True, include_end=False):
         event_loop = asyncio.get_event_loop()
-        return event_loop.run_until_complete(self.inner.scan_keys(start, end, limit, include_start, include_end))
+        return event_loop.run_until_complete(
+            self.inner.scan_keys(start, end, limit, include_start, include_end)
+        )
 
     def lock_keys(self, keys):
         event_loop = asyncio.get_event_loop()

@@ -8,10 +8,12 @@ class RawClient:
         raise Exception("Please use `RawClient.connect()` instead.")
 
     @classmethod
-    async def connect(cls, pd_endpoints):
+    async def connect(cls, pd_endpoints, timeout=60):
         if not isinstance(pd_endpoints, list):
-            raise Exception("Please use list as pd_endpoints. For example: `RawClient.connect([127.0.0.1:2379])`.")
-        inner = await tikv_client.RawClient.connect(pd_endpoints)
+            raise Exception(
+                "Please use list as pd_endpoints. For example: `RawClient.connect([127.0.0.1:2379])`."
+            )
+        inner = await tikv_client.RawClient.connect(pd_endpoints, timeout)
         self = cls.__new__(cls)
         self.inner = inner
         return self
@@ -22,11 +24,17 @@ class RawClient:
     async def batch_get(self, keys, cf="default"):
         return await self.inner.batch_get(keys, cf)
 
-    async def scan(self, start, end, limit, include_start=True, include_end=False, cf="default"):
+    async def scan(
+        self, start, end, limit, include_start=True, include_end=False, cf="default"
+    ):
         return await self.inner.scan(start, end, limit, include_start, include_end, cf)
 
-    async def scan_keys(self, start, end, limit, include_start=True, include_end=False, cf="default"):
-        return await self.inner.scan_keys(start, end, limit, include_start, include_end, cf)
+    async def scan_keys(
+        self, start, end, limit, include_start=True, include_end=False, cf="default"
+    ):
+        return await self.inner.scan_keys(
+            start, end, limit, include_start, include_end, cf
+        )
 
     async def put(self, key, value, cf="default"):
         await self.inner.put(key, value, cf)
@@ -40,7 +48,9 @@ class RawClient:
     async def batch_delete(self, keys, cf="default"):
         return await self.inner.batch_delete(keys, cf)
 
-    async def delete_range(self, start, end=None, include_start=True, include_end=False, cf="default"):
+    async def delete_range(
+        self, start, end=None, include_start=True, include_end=False, cf="default"
+    ):
         return await self.inner.delete_range(start, end, include_start, include_end, cf)
 
 
@@ -49,10 +59,12 @@ class TransactionClient:
         raise Exception("Please use `TransactionClient.connect()` instead.")
 
     @classmethod
-    async def connect(cls, pd_endpoints):
+    async def connect(cls, pd_endpoints, timeout=60):
         if not isinstance(pd_endpoints, list):
-            raise Exception("Please use list as pd_endpoints. For example: `TransactionClient.connect([127.0.0.1:2379])`.")
-        inner = await tikv_client.TransactionClient.connect(pd_endpoints)
+            raise Exception(
+                "Please use list as pd_endpoints. For example: `TransactionClient.connect([127.0.0.1:2379])`."
+            )
+        inner = await tikv_client.TransactionClient.connect(pd_endpoints, timeout)
         self = cls.__new__(cls)
         self.inner = inner
         return self
