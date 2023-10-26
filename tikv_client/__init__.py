@@ -9,7 +9,7 @@ class RawClient:
         raise Exception("Please use `RawClient.connect()` instead.")
 
     @classmethod
-    def connect(cls, pd_endpoints, timeout=60):
+    def connect(cls, pd_endpoints, timeout=asynchronous.DEFAULT_TIMEOUT):
         event_loop = asyncio.get_event_loop()
         inner = event_loop.run_until_complete(
             asynchronous.RawClient.connect(pd_endpoints, timeout=timeout)
@@ -72,7 +72,7 @@ class TransactionClient:
         raise Exception("Please use `TransactionClient.connect()` instead.")
 
     @classmethod
-    def connect(cls, pd_endpoints, timeout=60):
+    def connect(cls, pd_endpoints, timeout=asynchronous.DEFAULT_TIMEOUT):
         event_loop = asyncio.get_event_loop()
         inner = event_loop.run_until_complete(
             asynchronous.TransactionClient.connect(pd_endpoints, timeout)

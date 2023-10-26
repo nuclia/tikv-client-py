@@ -3,12 +3,15 @@
 from .. import tikv_client
 
 
+DEFAULT_TIMEOUT = 3
+
+
 class RawClient:
     def __init__(self):
         raise Exception("Please use `RawClient.connect()` instead.")
 
     @classmethod
-    async def connect(cls, pd_endpoints, timeout=60):
+    async def connect(cls, pd_endpoints, timeout=DEFAULT_TIMEOUT):
         if not isinstance(pd_endpoints, list):
             raise Exception(
                 "Please use list as pd_endpoints. For example: `RawClient.connect([127.0.0.1:2379])`."
@@ -59,7 +62,7 @@ class TransactionClient:
         raise Exception("Please use `TransactionClient.connect()` instead.")
 
     @classmethod
-    async def connect(cls, pd_endpoints, timeout=60):
+    async def connect(cls, pd_endpoints, timeout=DEFAULT_TIMEOUT):
         if not isinstance(pd_endpoints, list):
             raise Exception(
                 "Please use list as pd_endpoints. For example: `TransactionClient.connect([127.0.0.1:2379])`."
