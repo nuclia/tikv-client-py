@@ -7,11 +7,15 @@ on:
 jobs:
   macos:
     runs-on: macos-latest
+    strategy:
+      matrix:
+        python: [3.9, 3.10, 3.11]
+        target: [x86_64, universal2-apple-darwin]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: 3.11
+          python-version: ${{ matrix.python }}
           architecture: x64
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
@@ -21,20 +25,10 @@ jobs:
           default: true
       - name: Install protoc
         run: brew install protobuf
-      - name: Build wheels - x86_64
-        uses: messense/maturin-action@v1
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
         with:
-          target: x86_64
-          args: --release --out dist
-      - name: Install built wheel - x86_64
-        run: |
-          cd dist
-          pip install tikv_client --no-index --find-links . --force-reinstall
-          python -c "import tikv_client"
-      - name: Build wheels - universal2
-        uses: messense/maturin-action@v1
-        with:
-          target: universal2-apple-darwin
+          target: ${{ matrix.target }}
           args: --release --out dist
       - name: Install built wheel - universal2
         run: |
@@ -52,11 +46,12 @@ jobs:
     strategy:
       matrix:
         target: [x64, x86]
+        python: [3.9, 3.10, 3.11]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: 3.11
+          python-version: ${{ matrix.python }}
           architecture: ${{ matrix.target }}
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2
@@ -71,7 +66,7 @@ jobs:
           profile: minimal
           default: true
       - name: Build wheels
-        uses: messense/maturin-action@v1
+        uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.target }}
           args: --release --out dist
@@ -91,11 +86,12 @@ jobs:
     strategy:
       matrix:
         target: [x86_64]
+        python: [3.9, 3.10, 3.11]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: 3.11
+          python-version: ${{ matrix.python }}
           architecture: x64
 
       - name: Build Wheels
@@ -123,7 +119,7 @@ jobs:
           rust-toolchain: nightly-2023-10-24
           target: ${{ matrix.target }}
           manylinux: auto
-          args: --release --out dist -i python3.11
+          args: --release --out dist -i python${{ matrix.python }}
 
       - name: Install built wheel
         if: matrix.target == 'x86_64'
@@ -148,7 +144,7 @@ jobs:
   #     with:
   #       python-version: 3.11
   #   - name: Build Wheels
-  #     uses: messense/maturin-action@v1
+  #     uses: PyO3/maturin-action@v1
   #     with:
   #       rust-toolchain: nightly
   #       target: ${{ matrix.target }}
