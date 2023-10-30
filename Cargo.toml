@@ -11,6 +11,9 @@ pyo3-asyncio = { version = "0.19", features = ["tokio-runtime", "attributes"] }
 tikv-client = "0.2"
 tokio = "1.33.0"
 
+[target.'cfg(target_os = "linux")'.dependencies]
+openssl = { version = "0.10.57", features = ["vendored"] }
+
 [lib]
 crate-type = ["cdylib"]
 name = "tikv_client"
